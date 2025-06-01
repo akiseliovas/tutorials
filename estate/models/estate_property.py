@@ -1,11 +1,12 @@
 from odoo import fields, models
 from odoo.tools import date_utils
 
-class Property(models.Model):
+class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real estate property"
 
     name = fields.Char(required=True, string='Title')
+    property_type_id = fields.Many2one("estate.property.type", string='Property Type')
     active = fields.Boolean(default=True)
     description = fields.Text()
     postcode = fields.Char(string='Postcode')
@@ -23,3 +24,8 @@ class Property(models.Model):
     state = fields.Selection(
         selection=[('new', 'New'), ('offer_received', 'Offer Received'), ('offer_accepted', 'Offer Accepted'), ('sold', 'Sold'), ('cancelled', 'Cancelled')],
         default='new', required=True, copy=False)
+    
+    buyer_id = fields.Many2one("res.partner", string="Buyer", copy=False)
+    salesperson_id = fields.Many2one("res.users", string="Salesperson", default=lambda self: self.env.user)
+    tag_ids = fields.Many2many("estate.property.tag", string="Property Tags")
+    offer_ids = fields.One2many("estate.property.offer", "property_id",)
